@@ -1,32 +1,27 @@
-# RIR — Relevanz-Impuls-Reinheit
+# Erweiterung: D-Q-F, XyX, AIR/AIV
 
-RIR ist die erste und präziseste Station im System.  
-Sie arbeitet minimal, autonom und ohne Masse-Abbildung.  
-RIR entscheidet, ob ein Impuls relevant, rein und weiterverarbeitbar ist.
+Das System erweitert RIR um dynamische Zustände (243.js), die über D-Q-F
+beschrieben werden. Zusätzlich existiert ein Sondermodus XyX, der bei
+Auftreten einer 9 aktiviert wird.
 
-## 1. Ziel
-RIR trennt:
-- Relevantes
-- Irrelevantes
-- Reines
-- Unreines
+## D-Q-F
+D = Dimension
+Q = Quantenfaktor
+F = Flavor/Faktor
 
-Nur reine, relevante Impulse werden weitergegeben.
+## XyX-Modus
+XyX wird aktiv, wenn x, y oder z den Wert 9 haben.
 
-## 2. Struktur
-RIR besteht aus drei Kernmodulen:
+### AIR
+AIR = Auftrieb (Lift)
+Wird aktiv, wenn (x+y+z) gerade ist.
 
-### RIR.Core
-Der Reinheitskern.  
-Prüft Existenz, Struktur und Reinheit eines Impulses.
+### AIV
+AIV = Abtrieb (Downforce)
+Wird aktiv, wenn (x+y+z) ungerade ist.
 
-### RIR.Filter
-Der Relevanzfilter.  
-Nur Impulse, die Core bestehen, werden markiert.
-
-### RIR.Peap
-Der Rückgabeprozessor.  
-Gibt ausschließlich reine, relevante Impulse zurück.
-
-## 3. Funktionsweise
-
+## Dateien
+- 3.js → Basis-DQF
+- 81.js → Erweiterte 9×9-DQF
+- XyX.js → Sondermodus AIR/AIV
+- 243.js → Proxy + Routing + DQF + XyX
