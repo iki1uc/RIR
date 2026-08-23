@@ -1,0 +1,23 @@
+RIR.Core = {
+  self: true,                 // RIR arbeitet autonom
+  purity: "OWN",              // nur eigene Impulse
+  mode: "RELEVANCE",          // reine Relevanzprüfung
+  qi: function(signal) {      // QI-Schaltung
+    return (signal !== null && signal !== undefined)
+  },
+  iqq: function(signal) {     // IQQ-Schaltung (verstärkte Reinheit)
+    return (typeof signal === "object" && signal.clean === true)
+  },
+  filter: function(signal) {  // Reinheitsfilter
+    if (this.qi(signal) && this.iqq(signal)) {
+      return { relevant: true, payload: signal }
+    }
+    return { relevant: false }
+  },
+  return: function(packet) {  // Rückgabe nur reiner Pakete
+    if (packet.relevant === true) {
+      return packet.payload
+    }
+    return null
+  }
+}
