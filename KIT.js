@@ -1,16 +1,12 @@
-export function KIT_RUN(input) {
+import { RIR } from "./RIR.Core.js";
+import { KIT } from "./KIT.js";
+
+export function RIR_KIT(input) {
   const check = RIR.return(input);
 
-  if (check.RIR !== "accept") {
-    return { status: "blocked", reason: "RIR-reject" };
+  if (check.RIR === "reject") {
+    return { status: "reject", source: "RIR" };
   }
 
-  // Ab hier darf KIT arbeiten
-  return {
-    status: "accepted",
-    ultra: ULTRA,
-    axiome: AXIOM,
-    respo: RESPO,
-    pipeline: pipeline(input.x || input)
-  };
+  return KIT_RUN(input);
 }
