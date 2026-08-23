@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>RIR / KIT Engine</title>
+
+  <!-- System-Meta -->
+  <meta name="system-id" content="RIR-3TH-SEC">
+  <meta name="role" content="sweet">
+  <meta name="engine" content="KIT-ULTRA">
+  <meta name="mode" content="RIR-Gatekeeper">
+
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: monospace;
+      padding: 20px;
+    }
+    .block {
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+    }
+    .ok { color: #6f6; }
+    .fail { color: #f66; }
+  </style>
+</head>
+
+<body>
+
+  <h1>RIR / KIT Engine</h1>
+  <p>System läuft. RIR ist Operation‑Station. KIT ist Arbeits‑Engine.</p>
+
+  <div id="output" class="block"></div>
+
+  <script type="module">
+
+    import { RIR } from "./RIR.Core.js";
+    import { KIT } from "./KIT.js";
+    import { stateProxy } from "./243.js";
+
+    // KIT_RUN — gestufte Instanz
+    function KIT_RUN(input) {
+      const check = RIR.return(input);
+
+      if (check.RIR !== "accept") {
+        return { status: "reject", source: "RIR" };
+      }
+
+      return {
+        status: "accepted",
+        ultra: KIT.ULTRA,
+        axiome: KIT.AXIOM,
+        respo: KIT.RESPO,
+        pipeline: KIT.pipeline(input.x || input)
+      };
+    }
+
+    // Beispiel-Impuls
+    const impulse = stateProxy["2,4,3"];
+
+    const result = KIT_RUN(impulse);
+
+    const out = document.getElementById("output");
+
+    if (result.status === "accepted") {
+      out.innerHTML = `
+        <div class="ok">✔ RIR akzeptiert Impuls</div>
+        <pre>${JSON.stringify(result, null, 2)}</pre>
+      `;
+    } else {
+      out.innerHTML = `
+        <div class="fail">✘ RIR blockiert Impuls</div>
+        <pre>${JSON.stringify(result, null, 2)}</pre>
+      `;
+    }
+
+  </script>
+
+</body>
+</html>
