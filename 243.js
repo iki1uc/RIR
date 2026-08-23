@@ -1,16 +1,33 @@
-export function XyX(x, y, z) {
-  const sum = x + y + z;
+import { baseDQF } from "./3.js";
+import { extendedDQF } from "./81.js";
+import { XyX } from "./XyX.js";
 
-  const mode = sum % 2 === 0 ? "AIR" : "AIV"; 
-  // AIR = Auftrieb (even)
-  // AIV = Abtrieb (odd)
+function generateState(x, y, z) {
+
+  if (x === 9 || y === 9 || z === 9) {
+    return XyX(x, y, z);
+  }
+
+  const dqf = (x + y + z) > 20
+    ? extendedDQF(x, y, z)
+    : baseDQF(x, y, z);
 
   return {
-    mode,
-    lift: mode === "AIR" ? sum * 1.5 : 0,
-    down: mode === "AIV" ? sum * 2.1 : 0,
-    D: `DimX(${x * y * z})`,
-    Q: (x + y + z) % 7,
-    F: `Fxy-${x}-${y}-${z}`
+    x: x * x,
+    y: y * 2,
+    z: z + 7,
+    meta: `Zustand (${x},${y},${z})`,
+    dqf
   };
 }
+
+function getState(id) {
+  const [x, y, z] = id.split(',').map(Number);
+  return generateState(x, y, z);
+}
+
+export const stateProxy = new Proxy({}, {
+  get(_, prop) {
+    return getState(prop);
+  }
+});
