@@ -1,23 +1,34 @@
-RIR.Core = {
-  self: true,                 // RIR arbeitet autonom
-  purity: "OWN",              // nur eigene Impulse
-  mode: "RELEVANCE",          // reine Relevanzprüfung
-  qi: function(signal) {      // QI-Schaltung
-    return (signal !== null && signal !== undefined)
+export const RIR = {
+
+  // 1. Existenzprüfung
+  exist(input) {
+    return input !== undefined && input !== null;
   },
-  iqq: function(signal) {     // IQQ-Schaltung (verstärkte Reinheit)
-    return (typeof signal === "object" && signal.clean === true)
+
+  // 2. Strukturprüfung
+  structure(input) {
+    if (typeof input !== "object") return false;
+    return ["x", "y", "z"].every(key => key in input);
   },
-  filter: function(signal) {  // Reinheitsfilter
-    if (this.qi(signal) && this.iqq(signal)) {
-      return { relevant: true, payload: signal }
-    }
-    return { relevant: false }
+
+  // 3. Reinheitsprüfung
+  purity(input) {
+    const { x, y, z } = input;
+    return Number.isFinite(x) && Number.isFinite(y) && Number.isFinite(z);
   },
-  return: function(packet) {  // Rückgabe nur reiner Pakete
-    if (packet.relevant === true) {
-      return packet.payload
-    }
-    return null
+
+  // 4. Filter: alles zusammen
+  filter(input) {
+    if (!this.exist(input)) return null;
+    if (!this.structure(input)) return null;
+    if (!this.purity(input)) return null;
+    return input;
+  },
+
+  // 5. Rückgabe: nur reine Impulse
+  return(input) {
+    const packet = this.filter(input);
+    if (!packet) return { RIR: "reject" };
+    return { RIR: "accept", packet };
   }
-}
+};
