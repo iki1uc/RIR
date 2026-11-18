@@ -1,33 +1,29 @@
-import { baseDQF } from "./3.js";
-import { extendedDQF } from "./81.js";
-import { XyX } from "./XyX.js";
-
-function generateState(x, y, z) {
-
-  if (x === 9 || y === 9 || z === 9) {
-    return XyX(x, y, z);
+function parseCoordinates(id) {
+  if (typeof id !== "string") {
+    throw new TypeError("Die ID muss ein String im Format 'x,y,z' sein.");
   }
 
-  const dqf = (x + y + z) > 20
-    ? extendedDQF(x, y, z)
-    : baseDQF(x, y, z);
+  const parts = id.split(",");
+  if (parts.length !== 3 || parts.some(part => part.trim() === "")) {
+    throw new Error("Erwartetes Format: 'x,y,z'.");
+  }
 
-  return {
-    x: x * x,
-    y: y * 2,
-    z: z + 7,
-    meta: `Zustand (${x},${y},${z})`,
-    dqf
-  };
+  const coordinates = parts.map(Number);
+  if (!coordinates.every(Number.isFinite)) {
+    throw new Error("Alle Koordinaten müssen endliche Zahlen sein.");
+  }
+
+  return coordinates;
 }
 
 function getState(id) {
-  const [x, y, z] = id.split(',').map(Number);
+  const [x, y, z] = parseCoordinates(id);
   return generateState(x, y, z);
 }
 
-export const stateProxy = new Proxy({}, {
+export const stateProxy = new Proxy(Object.create(null), {
   get(_, prop) {
+    if (typeof prop !== "string") return undefined;
     return getState(prop);
   }
 });
